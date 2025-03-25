@@ -1,0 +1,4 @@
+ktor:
+    application:
+        modules:
+            - dev.achmad.ApplicationKt.module
