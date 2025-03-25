@@ -8,16 +8,14 @@ data class FileUploadStatusCodes(
 ) {
     companion object {
         val InvalidSessionID = FileUploadStatusCodes(1, "Invalid session ID")
-        val InvalidChunkIndex = FileUploadStatusCodes(1, "Invalid chunk index")
-        val UploadSessionNotFound = FileUploadStatusCodes(1, "Upload session not found")
-        val UploadSessionCancelled = FileUploadStatusCodes(2, "Upload session is already cancelled")
-        val UploadSessionNotFoundOrCancelled = FileUploadStatusCodes(3, "Upload session not found or cancelled")
-        val FileAlreadyUploaded = FileUploadStatusCodes(4, "File already uploaded")
-        val ChunkAlreadyUploaded = FileUploadStatusCodes(5, "Chunk already uploaded")
-        val NoFilePart = FileUploadStatusCodes(6, "No file part found in the request")
-        val UploadCancelled = FileUploadStatusCodes(7, "Upload cancelled successfully")
-        val FileAssembled = FileUploadStatusCodes(7, "File assembled successfully")
-        val UploadSessionNotFoundOrIncomplete = FileUploadStatusCodes(8, "Upload session not found or incomplete")
+        val InvalidChunkIndex = FileUploadStatusCodes(2, "Invalid chunk index")
+        val UploadSessionNotFound = FileUploadStatusCodes(3, "Upload session not found")
+        val UploadSessionCancelled = FileUploadStatusCodes(4, "Upload session is already cancelled")
+        val UploadSessionNotFoundOrCancelled = FileUploadStatusCodes(5, "Upload session not found or cancelled")
+        val FileAlreadyUploaded = FileUploadStatusCodes(6, "File already uploaded")
+        val ChunkAlreadyUploaded = FileUploadStatusCodes(7, "Chunk already uploaded")
+        val NoFilePart = FileUploadStatusCodes(8, "No file part found in the request")
+        val UploadSessionNotFoundOrIncomplete = FileUploadStatusCodes(9, "Upload session not found or incomplete")
     }
 }
 

@@ -208,7 +208,11 @@ object FileUploadController {
                         if (filePath != null) {
                             call.respond(
                                 HttpStatusCode.OK,
-                                FileUploadStatusCodes.FileAssembled.toResponse(HttpStatusCode.OK)
+                                BaseResponse(
+                                    statusCode = HttpStatusCode.OK.value,
+                                    message = "File assembled successfully",
+                                    data = null
+                                )
                             )
                         } else {
                             call.respond(
