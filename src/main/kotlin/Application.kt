@@ -20,13 +20,17 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 
 fun main() {
     embeddedServer(Netty, port = 8080) {
-        configureControllers()
-        configureDatabase()
-        configureUploadDirectory()
-        configureSerialization()
-        configureCORS()
-        configureStatusPages()
+        module()
     }.start(wait = true)
+}
+
+fun Application.module() {
+    configureControllers()
+    configureDatabase()
+    configureUploadDirectory()
+    configureSerialization()
+    configureCORS()
+    configureStatusPages()
 }
 
 fun Application.configureControllers() {
