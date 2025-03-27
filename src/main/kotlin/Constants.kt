@@ -10,12 +10,11 @@ data class FileUploadStatusCodes(
         val InvalidSessionID = FileUploadStatusCodes(1, "Invalid session ID")
         val InvalidChunkIndex = FileUploadStatusCodes(2, "Invalid chunk index")
         val UploadSessionNotFound = FileUploadStatusCodes(3, "Upload session not found")
-        val UploadSessionCancelled = FileUploadStatusCodes(4, "Upload session is already cancelled")
-        val UploadSessionNotFoundOrCancelled = FileUploadStatusCodes(5, "Upload session not found or cancelled")
-        val FileAlreadyUploaded = FileUploadStatusCodes(6, "File already uploaded")
-        val ChunkAlreadyUploaded = FileUploadStatusCodes(7, "Chunk already uploaded")
-        val NoFilePart = FileUploadStatusCodes(8, "No file part found in the request")
-        val UploadSessionNotFoundOrIncomplete = FileUploadStatusCodes(9, "Upload session not found or incomplete")
+        val UploadSessionNotFoundOrCancelled = FileUploadStatusCodes(4, "Upload session not found or cancelled")
+        val FileAlreadyUploaded = FileUploadStatusCodes(5, "File already uploaded")
+        val ChunkAlreadyUploaded = FileUploadStatusCodes(6, "Chunk already uploaded")
+        val NoFilePart = FileUploadStatusCodes(7, "No file part found in the request")
+        val UploadSessionNotFoundOrIncomplete = FileUploadStatusCodes(8, "Upload session not found or incomplete")
     }
 }
 

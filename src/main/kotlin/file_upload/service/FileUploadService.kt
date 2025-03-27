@@ -10,7 +10,9 @@ import java.io.File
 import java.time.LocalDateTime
 import java.util.UUID
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -54,7 +56,7 @@ object FileUploadService {
         return dbQuery {
             // Check if session exists and is not cancelled
             val session = FileUpload.selectAll()
-                .where { (FileUpload.id eq sessionId) and (FileUpload.status neq FileUploadStatus.CANCELLED.name) }
+                .where { (FileUpload.id eq sessionId) and (FileUpload.status neq FileUploadStatus.UNKNOWN.name) }
                 .singleOrNull() ?: return@dbQuery null
 
             // Update upload session with incremented chunk count
@@ -83,15 +85,14 @@ object FileUploadService {
     suspend fun getUploadStatus(sessionId: UUID): UploadStatusResponse? {
         return dbQuery {
             val session = FileUpload.selectAll()
-                .where { FileUpload.id eq sessionId and (FileUpload.status neq FileUploadStatus.CANCELLED.name) }
+                .where { FileUpload.id eq sessionId and (FileUpload.status neq FileUploadStatus.UNKNOWN.name) }
                 .singleOrNull() ?: return@dbQuery null
 
             val totalChunks = session[FileUpload.totalChunks]
             val uploadedChunks = session[FileUpload.uploadedChunks]
-            val progress = if (totalChunks > 0)
-                uploadedChunks.toDouble() / totalChunks
-            else
-                0.0
+            val progress =
+                if (totalChunks > 0) uploadedChunks.toDouble() / totalChunks
+                else 0.0
 
             UploadStatusResponse(
                 sessionId = sessionId.toString(),
@@ -107,27 +108,17 @@ object FileUploadService {
 
     suspend fun cancelUpload(sessionId: UUID): Boolean {
         return dbQuery {
-            val exist = FileUpload.selectAll()
-                .where { FileUpload.id eq sessionId and (FileUpload.status neq FileUploadStatus.CANCELLED.name) }
-                .singleOrNull()
-
-            if (exist == null) {
-                return@dbQuery false
-            }
-
-            FileUpload.update({ FileUpload.id eq sessionId }) {
-                it[status] = FileUploadStatus.CANCELLED.name
-                it[updatedAt] = LocalDateTime.now()
-            }
-
-            true
+            val rows = FileUpload.deleteWhere { FileUpload.id eq sessionId }
+            if (rows < 1) return@dbQuery false
+            val file = File("uploads/${sessionId}")
+            file.deleteRecursively()
         }
     }
 
     suspend fun assembleFile(sessionId: UUID): String? {
         return dbQuery {
             val session = FileUpload.selectAll()
-                .where { FileUpload.id eq sessionId and (FileUpload.status neq FileUploadStatus.CANCELLED.name) }
+                .where { FileUpload.id eq sessionId and (FileUpload.status eq FileUploadStatus.UNKNOWN.name) }
                 .singleOrNull() ?: return@dbQuery null
 
             val status = session[FileUpload.status]

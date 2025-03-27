@@ -72,20 +72,12 @@ object FileUploadController {
                             )
                             return@post
                         }
-                        if (sessionStatus.status == FileUploadStatus.CANCELLED.name) {
-                            call.respond(
-                                HttpStatusCode.BadRequest,
-                                FileUploadStatusCodes.UploadSessionCancelled.toResponse(HttpStatusCode.BadRequest)
-                            )
-                            return@post
-                        }
                         if (sessionStatus.status == FileUploadStatus.ASSEMBLED.name) {
                             call.respond(
                                 HttpStatusCode.BadRequest,
                                 FileUploadStatusCodes.FileAlreadyUploaded.toResponse(HttpStatusCode.BadRequest)
                             )
                         }
-
                         if (chunkIndex < sessionStatus.uploadedChunks) {
                             call.respond(
                                 HttpStatusCode.BadRequest,

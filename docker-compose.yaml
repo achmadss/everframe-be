@@ -1,7 +1,6 @@
 services:
 
   swagger-ui:
-    container_name: swagger-ui
     image: swaggerapi/swagger-ui:latest
     ports:
       - "8081:8080"
