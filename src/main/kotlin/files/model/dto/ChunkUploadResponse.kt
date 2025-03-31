@@ -1,4 +1,4 @@
-package file_upload.model.dto
+package files.model.dto
 
 import kotlinx.serialization.Serializable
 

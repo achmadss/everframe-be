@@ -4,8 +4,8 @@ import dev.achmad.dbQuery
 import dev.achmad.file_upload.model.FileUpload
 import dev.achmad.file_upload.model.FileUploadStatus
 import dev.achmad.file_upload.model.dto.UploadSessionRequest
-import file_upload.model.dto.ChunkUploadResponse
-import file_upload.model.dto.UploadStatusResponse
+import files.model.dto.ChunkUploadResponse
+import files.model.dto.UploadStatusResponse
 import io.ktor.http.content.MultiPartData
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
