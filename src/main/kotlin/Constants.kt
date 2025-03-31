@@ -15,6 +15,7 @@ data class FileUploadStatusCodes(
         val ChunkAlreadyUploaded = FileUploadStatusCodes(6, "Chunk already uploaded")
         val NoFilePart = FileUploadStatusCodes(7, "No file part found in the request")
         val UploadSessionNotFoundOrIncomplete = FileUploadStatusCodes(8, "Upload session not found or incomplete")
+        val InvalidUploadDirectory = FileUploadStatusCodes(9, "Invalid upload directory")
     }
 }
 

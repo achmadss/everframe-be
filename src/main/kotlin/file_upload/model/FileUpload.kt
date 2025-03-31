@@ -4,7 +4,8 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.javatime.datetime
 
 object FileUpload: UUIDTable() {
-    val fileName = varchar("file_name", 255)
+    val directory = text("directory")
+    val fileName = text("file_name")
     val fileSize = long("file_size")
     val mimeType = varchar("mime_type", 100)
     val totalChunks = integer("total_chunks")

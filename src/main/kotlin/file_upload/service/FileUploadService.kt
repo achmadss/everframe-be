@@ -6,6 +6,10 @@ import dev.achmad.file_upload.model.FileUploadStatus
 import dev.achmad.file_upload.model.dto.UploadSessionRequest
 import file_upload.model.dto.ChunkUploadResponse
 import file_upload.model.dto.UploadStatusResponse
+import io.ktor.http.content.MultiPartData
+import io.ktor.http.content.PartData
+import io.ktor.http.content.forEachPart
+import io.ktor.http.content.streamProvider
 import java.io.File
 import java.time.LocalDateTime
 import java.util.UUID
@@ -30,6 +34,7 @@ object FileUploadService {
         return dbQuery {
             val now = LocalDateTime.now()
             val sessionId = FileUpload.insert {
+                it[directory] = request.directory
                 it[fileName] = request.fileName
                 it[fileSize] = request.fileSize
                 it[mimeType] = request.mimeType
@@ -40,7 +45,7 @@ object FileUploadService {
             } get FileUpload.id
 
             // Create directory for chunks
-            val sessionDir = File("uploads/${sessionId}")
+            val sessionDir = File("uploads/${request.directory}/${sessionId}")
             if (!sessionDir.exists()) {
                 sessionDir.mkdir()
             }
@@ -82,6 +87,28 @@ object FileUploadService {
         }
     }
 
+    suspend fun processMultipart(
+        data: MultiPartData,
+        sessionId: UUID,
+        directory: String,
+        chunkIndex: Int,
+    ): Boolean {
+        var fileProcessed = false
+        val chunkFile = File("uploads/$directory/$sessionId/chunk_$chunkIndex")
+        data.forEachPart { part ->
+            if (part is PartData.FileItem && !fileProcessed) {
+                part.streamProvider().use { input ->
+                    chunkFile.outputStream().buffered().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+                fileProcessed = true
+            }
+            part.dispose()
+        }
+        return fileProcessed
+    }
+
     suspend fun getUploadStatus(sessionId: UUID): UploadStatusResponse? {
         return dbQuery {
             val session = FileUpload.selectAll()
@@ -106,11 +133,14 @@ object FileUploadService {
         }
     }
 
-    suspend fun cancelUpload(sessionId: UUID): Boolean {
+    suspend fun cancelUpload(
+        directory: String,
+        sessionId: UUID,
+    ): Boolean {
         return dbQuery {
             val rows = FileUpload.deleteWhere { FileUpload.id eq sessionId }
             if (rows < 1) return@dbQuery false
-            val file = File("uploads/${sessionId}")
+            val file = File("uploads/$directory/${sessionId}")
             file.deleteRecursively()
         }
     }

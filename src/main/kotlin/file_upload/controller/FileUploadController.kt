@@ -43,7 +43,16 @@ object FileUploadController {
                         )
                     }
 
-                    post("/chunk/{sessionId}/{chunkIndex}") {
+                    post("/chunk/{directory}/{sessionId}/{chunkIndex}") {
+                        val directory = call.parameters["directory"]
+                        if (directory == null) {
+                            call.respond(
+                                HttpStatusCode.BadRequest,
+                                FileUploadStatusCodes.InvalidUploadDirectory.toResponse(HttpStatusCode.BadRequest)
+                            )
+                            return@post
+                        }
+
                         val sessionId = try {
                             UUID.fromString(call.parameters["sessionId"])
                         } catch (e: Exception) {
@@ -86,27 +95,14 @@ object FileUploadController {
                             return@post
                         }
 
-                        val multipart = call.receiveMultipart()
-                        var fileProcessed = false
-                        var chunkFile: File? = null
+                        val fileProcessed = FileUploadService.processMultipart(
+                            data = call.receiveMultipart(),
+                            sessionId = sessionId,
+                            directory = directory,
+                            chunkIndex = chunkIndex
+                        )
 
-                        multipart.forEachPart { part ->
-                            if (part is PartData.FileItem && !fileProcessed) {
-                                chunkFile = File("uploads/$sessionId/chunk_$chunkIndex")
-
-                                part.streamProvider().use { input ->
-                                    chunkFile!!.outputStream().buffered().use { output ->
-                                        input.copyTo(output)
-                                    }
-                                }
-
-                                fileProcessed = true
-                            }
-
-                            part.dispose()
-                        }
-
-                        if (fileProcessed && chunkFile != null) {
+                        if (fileProcessed) {
                             val response = FileUploadService.saveChunk(sessionId, chunkIndex)
                             if (response != null) {
                                 call.respond(
@@ -157,6 +153,15 @@ object FileUploadController {
                     }
 
                     delete("/session/{sessionId}") {
+                        val directory = call.parameters["directory"]
+                        if (directory == null) {
+                            call.respond(
+                                HttpStatusCode.BadRequest,
+                                FileUploadStatusCodes.InvalidUploadDirectory.toResponse(HttpStatusCode.BadRequest)
+                            )
+                            return@delete
+                        }
+
                         val sessionId = try {
                             UUID.fromString(call.parameters["sessionId"])
                         } catch (e: Exception) {
@@ -167,7 +172,7 @@ object FileUploadController {
                             return@delete
                         }
 
-                        if (FileUploadService.cancelUpload(sessionId)) {
+                        if (FileUploadService.cancelUpload(directory, sessionId)) {
                             call.respond(
                                 HttpStatusCode.OK,
                                 BaseResponse(
