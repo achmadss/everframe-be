@@ -1,11 +1,11 @@
-package dev.achmad.file_upload.service
+package dev.achmad.files.service
 
 import dev.achmad.dbQuery
-import dev.achmad.file_upload.model.FileUpload
-import dev.achmad.file_upload.model.FileUploadStatus
-import dev.achmad.file_upload.model.dto.UploadSessionRequest
-import files.model.dto.ChunkUploadResponse
-import files.model.dto.UploadStatusResponse
+import dev.achmad.files.model.FileUpload
+import dev.achmad.files.model.FileUploadStatus
+import dev.achmad.files.model.dto.ChunkUploadResponse
+import dev.achmad.files.model.dto.UploadSessionRequest
+import dev.achmad.files.model.dto.UploadStatusResponse
 import io.ktor.http.content.MultiPartData
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart

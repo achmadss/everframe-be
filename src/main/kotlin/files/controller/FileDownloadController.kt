@@ -1,4 +1,4 @@
-package dev.achmad.file_upload.controller
+package dev.achmad.files.controller
 
 import io.ktor.server.application.Application
 import io.ktor.server.routing.get

@@ -1,15 +1,12 @@
-package dev.achmad.file_upload.controller
+package dev.achmad.files.controller
 
 import dev.achmad.FileUploadStatusCodes
 import dev.achmad.common.model.BaseResponse
-import dev.achmad.file_upload.model.FileUploadStatus
-import dev.achmad.file_upload.model.dto.UploadSessionRequest
-import dev.achmad.file_upload.service.FileUploadService
+import dev.achmad.files.model.FileUploadStatus
+import dev.achmad.files.model.dto.UploadSessionRequest
+import dev.achmad.files.service.FileUploadService
 import dev.achmad.toResponse
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.content.PartData
-import io.ktor.http.content.forEachPart
-import io.ktor.http.content.streamProvider
 import io.ktor.server.application.Application
 import io.ktor.server.request.receive
 import io.ktor.server.request.receiveMultipart
@@ -19,7 +16,6 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import java.io.File
 import java.util.UUID
 
 object FileUploadController {

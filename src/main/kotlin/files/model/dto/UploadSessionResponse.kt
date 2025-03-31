@@ -1,4 +1,4 @@
-package dev.achmad.file_upload.model.dto
+package dev.achmad.files.model.dto
 
 data class UploadSessionResponse(
     val sessionId: String,

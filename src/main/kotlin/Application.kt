@@ -1,7 +1,7 @@
 package dev.achmad
 
 import dev.achmad.common.model.BaseResponse
-import dev.achmad.file_upload.controller.FileUploadController
+import dev.achmad.files.controller.FileUploadController
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.gson.gson

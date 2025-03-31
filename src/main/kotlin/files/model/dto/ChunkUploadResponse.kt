@@ -1,4 +1,4 @@
-package files.model.dto
+package dev.achmad.files.model.dto
 
 import kotlinx.serialization.Serializable
 

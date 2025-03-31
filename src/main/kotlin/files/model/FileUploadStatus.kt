@@ -1,4 +1,4 @@
-package dev.achmad.file_upload.model
+package dev.achmad.files.model
 
 enum class FileUploadStatus {
     PENDING, ASSEMBLED, COMPLETED, UNKNOWN;
