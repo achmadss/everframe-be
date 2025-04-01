@@ -8,6 +8,8 @@ group = "dev.achmad"
 version = "0.0.1"
 
 application {
+    project.setProperty("mainClassName", "dev.achmad.ApplicationKt")
+
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }

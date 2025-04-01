@@ -1,34 +1,39 @@
 # Stage 1: Build Application
-FROM gradle:8.3.0-jdk17-alpine AS build
+FROM gradle:8.4.0-jdk17-alpine AS build
 WORKDIR /home/gradle/app
 
-# Use alpine-based image and install only essential build dependencies
+# Only install essential build dependencies
 RUN apk add --no-cache bash
 
-# Copy only the files needed for dependency resolution first
-COPY build.gradle.* gradle.properties settings.gradle* gradle/ ./
-RUN gradle --no-daemon dependencies > /dev/null 2>&1 || true
+# Implement better layer caching for dependencies
+COPY gradle/ ./gradle/
+COPY build.gradle.* settings.gradle* gradle.properties ./
+RUN gradle --no-daemon dependencies
 
-# Copy source and build
+# Copy source and build with specific target
 COPY . .
-RUN gradle buildFatJar --no-daemon --parallel
+RUN gradle buildFatJar --no-daemon --parallel -x test
 
-# Stage 2: Create a minimal runtime image
-FROM alpine:3.19
+# Stage 2: Runtime with minimal image
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
-# Install minimal JRE and SSL certificates
-RUN apk add --no-cache openjdk17-jre-headless tzdata
+# Add only necessary packages
+RUN apk add --no-cache tzdata
 
 # Copy only the final JAR
 COPY --from=build /home/gradle/app/build/libs/*.jar /app/everframe.jar
 
-# Create a non-root user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Create a dedicated user for better security
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup && \
+    chown -R appuser:appgroup /app
 USER appuser
 
-# Configure Java options for container environment
-ENV JAVA_OPTS="-XX:+UseContainerSupport -Djava.security.egd=file:/dev/./urandom"
+# Configure optimized JVM options for containers
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom"
+
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=5s CMD wget -q --spider http://localhost:8080/health || exit 1
 
 EXPOSE 8080
 ENTRYPOINT exec java $JAVA_OPTS -jar /app/everframe.jar
