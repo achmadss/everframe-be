@@ -1,6 +1,7 @@
 package dev.achmad
 
 import dev.achmad.common.model.BaseResponse
+import dev.achmad.files.controller.FileDownloadController
 import dev.achmad.files.controller.FileUploadController
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -35,6 +36,7 @@ fun Application.module() {
 
 fun Application.configureControllers() {
     FileUploadController.configure(this)
+    FileDownloadController.configure(this)
 }
 
 fun Application.configureDatabase() {

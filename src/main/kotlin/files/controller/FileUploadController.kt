@@ -1,6 +1,6 @@
 package dev.achmad.files.controller
 
-import dev.achmad.FileUploadStatusCodes
+import dev.achmad.FileErrorStatusCodes
 import dev.achmad.common.model.BaseResponse
 import dev.achmad.files.model.FileUploadStatus
 import dev.achmad.files.model.dto.UploadSessionRequest
@@ -44,7 +44,7 @@ object FileUploadController {
                         if (directory == null) {
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                FileUploadStatusCodes.InvalidUploadDirectory.toResponse(HttpStatusCode.BadRequest)
+                                FileErrorStatusCodes.InvalidUploadDirectory.toResponse(HttpStatusCode.BadRequest)
                             )
                             return@post
                         }
@@ -54,7 +54,7 @@ object FileUploadController {
                         } catch (e: Exception) {
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                FileUploadStatusCodes.InvalidSessionID.toResponse(HttpStatusCode.BadRequest)
+                                FileErrorStatusCodes.InvalidSessionID.toResponse(HttpStatusCode.BadRequest)
                             )
                             return@post
                         }
@@ -63,7 +63,7 @@ object FileUploadController {
                         if (chunkIndex == null) {
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                FileUploadStatusCodes.InvalidChunkIndex.toResponse(HttpStatusCode.BadRequest)
+                                FileErrorStatusCodes.InvalidChunkIndex.toResponse(HttpStatusCode.BadRequest)
                             )
                             return@post
                         }
@@ -73,20 +73,20 @@ object FileUploadController {
                         if (sessionStatus == null) {
                             call.respond(
                                 HttpStatusCode.NotFound,
-                                FileUploadStatusCodes.UploadSessionNotFound.toResponse(HttpStatusCode.NotFound)
+                                FileErrorStatusCodes.UploadSessionNotFound.toResponse(HttpStatusCode.NotFound)
                             )
                             return@post
                         }
                         if (sessionStatus.status == FileUploadStatus.ASSEMBLED.name) {
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                FileUploadStatusCodes.FileAlreadyUploaded.toResponse(HttpStatusCode.BadRequest)
+                                FileErrorStatusCodes.FileAlreadyUploaded.toResponse(HttpStatusCode.BadRequest)
                             )
                         }
                         if (chunkIndex < sessionStatus.uploadedChunks) {
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                FileUploadStatusCodes.ChunkAlreadyUploaded.toResponse(HttpStatusCode.BadRequest)
+                                FileErrorStatusCodes.ChunkAlreadyUploaded.toResponse(HttpStatusCode.BadRequest)
                             )
                             return@post
                         }
@@ -110,12 +110,12 @@ object FileUploadController {
                                 )
                             } else call.respond(
                                 HttpStatusCode.NotFound,
-                                FileUploadStatusCodes.UploadSessionNotFoundOrCancelled.toResponse(HttpStatusCode.NotFound)
+                                FileErrorStatusCodes.UploadSessionNotFoundOrCancelled.toResponse(HttpStatusCode.NotFound)
                             )
                         } else {
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                FileUploadStatusCodes.NoFilePart.toResponse(HttpStatusCode.BadRequest)
+                                FileErrorStatusCodes.NoFilePart.toResponse(HttpStatusCode.BadRequest)
                             )
                         }
                     }
@@ -126,7 +126,7 @@ object FileUploadController {
                         } catch (e: Exception) {
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                FileUploadStatusCodes.InvalidSessionID.toResponse(HttpStatusCode.BadRequest)
+                                FileErrorStatusCodes.InvalidSessionID.toResponse(HttpStatusCode.BadRequest)
                             )
                             return@get
                         }
@@ -143,7 +143,7 @@ object FileUploadController {
                         } else {
                             call.respond(
                                 HttpStatusCode.NotFound,
-                                FileUploadStatusCodes.UploadSessionNotFound.toResponse(HttpStatusCode.NotFound)
+                                FileErrorStatusCodes.UploadSessionNotFound.toResponse(HttpStatusCode.NotFound)
                             )
                         }
                     }
@@ -153,7 +153,7 @@ object FileUploadController {
                         if (directory == null) {
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                FileUploadStatusCodes.InvalidUploadDirectory.toResponse(HttpStatusCode.BadRequest)
+                                FileErrorStatusCodes.InvalidUploadDirectory.toResponse(HttpStatusCode.BadRequest)
                             )
                             return@delete
                         }
@@ -163,7 +163,7 @@ object FileUploadController {
                         } catch (e: Exception) {
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                FileUploadStatusCodes.InvalidSessionID.toResponse(HttpStatusCode.BadRequest)
+                                FileErrorStatusCodes.InvalidSessionID.toResponse(HttpStatusCode.BadRequest)
                             )
                             return@delete
                         }
@@ -180,7 +180,7 @@ object FileUploadController {
                         } else {
                             call.respond(
                                 HttpStatusCode.NotFound,
-                                FileUploadStatusCodes.UploadSessionNotFound.toResponse(HttpStatusCode.NotFound)
+                                FileErrorStatusCodes.UploadSessionNotFound.toResponse(HttpStatusCode.NotFound)
                             )
                         }
                     }
@@ -191,7 +191,7 @@ object FileUploadController {
                         } catch (e: Exception) {
                             call.respond(
                                 HttpStatusCode.BadRequest,
-                                FileUploadStatusCodes.InvalidSessionID.toResponse(HttpStatusCode.BadRequest)
+                                FileErrorStatusCodes.InvalidSessionID.toResponse(HttpStatusCode.BadRequest)
                             )
                             return@post
                         }
@@ -210,7 +210,7 @@ object FileUploadController {
                         } else {
                             call.respond(
                                 HttpStatusCode.NotFound,
-                                FileUploadStatusCodes.UploadSessionNotFoundOrIncomplete.toResponse(HttpStatusCode.NotFound)
+                                FileErrorStatusCodes.UploadSessionNotFoundOrIncomplete.toResponse(HttpStatusCode.NotFound)
                             )
                         }
                     }
