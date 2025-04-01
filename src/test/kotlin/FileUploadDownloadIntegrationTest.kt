@@ -5,26 +5,17 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitFormWithBinaryData
 import io.ktor.client.statement.HttpResponse
-import io.ktor.client.statement.bodyAsChannel
-import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.bodyAsBytes
 import io.ktor.http.*
 import io.ktor.serialization.gson.gson
 import io.ktor.server.testing.*
-import io.ktor.util.cio.writeChannel
-import io.ktor.utils.io.ByteReadChannel
-import io.ktor.utils.io.InternalAPI
-import io.ktor.utils.io.copyTo
-import io.ktor.utils.io.core.buildPacket
-import io.ktor.utils.io.core.writeFully
 import java.io.File
 import java.nio.file.Paths
 import java.util.UUID
 import kotlin.test.Test
-import kotlinx.coroutines.delay
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 
@@ -103,16 +94,19 @@ class FileUploadDownloadIntegrationTest {
         Assertions.assertEquals(HttpStatusCode.OK, downloadResponse.status)
 
         // Verify the downloaded zip file
-        val zipFile = File("downloaded.zip")
-        val result = downloadResponse.bodyAsChannel().copyTo(zipFile.writeChannel())
-        println(result)
-        assertTrue(result > 0L)
-        zipFile.delete()
+        val downloadedZipFile = File("downloaded.zip")
+        downloadedZipFile.createNewFile()
+        downloadedZipFile.appendBytes(downloadResponse.bodyAsBytes())
+        assertTrue(downloadedZipFile.length() > 0)
+        downloadedZipFile.delete()
 
         // Delete the session
         val deleteSessionResponse = httpClient.deleteSession(testDirectoryUpload, sessionId!!)
         Assertions.assertEquals(HttpStatusCode.OK, deleteSessionResponse.status)
 
+        // delete uploads content dir
+        val uploads = File("uploads")
+        uploads.deleteRecursively()
     }
 
     private suspend fun HttpClient.createUploadSession(
