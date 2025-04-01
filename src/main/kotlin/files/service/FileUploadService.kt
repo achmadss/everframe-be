@@ -47,7 +47,8 @@ object FileUploadService {
             // Create directory for chunks
             val sessionDir = File("uploads/${request.directory}/${sessionId}")
             if (!sessionDir.exists()) {
-                sessionDir.mkdir()
+                val dir = sessionDir.mkdirs()
+                if (!dir) throw Exception("failed to create directory uploads/${request.directory}/${sessionId}")
             }
 
             sessionId.value.toString()
@@ -148,7 +149,7 @@ object FileUploadService {
     suspend fun assembleFile(sessionId: UUID): String? {
         return dbQuery {
             val session = FileUpload.selectAll()
-                .where { FileUpload.id eq sessionId and (FileUpload.status eq FileUploadStatus.UNKNOWN.name) }
+                .where { FileUpload.id eq sessionId and (FileUpload.status neq FileUploadStatus.UNKNOWN.name) }
                 .singleOrNull() ?: return@dbQuery null
 
             val status = session[FileUpload.status]
@@ -164,11 +165,15 @@ object FileUploadService {
                 return@dbQuery null
             }
 
-            val outputFile = File("uploads/$sessionId/$fileName")
+            val directory = session[FileUpload.directory]
+            val outputFile = File("uploads/$directory/$sessionId/$fileName")
+            if (outputFile.exists()) {
+                outputFile.delete()
+            }
             outputFile.createNewFile()
 
             for (i in 0 until totalChunks) {
-                val chunkFile = File("uploads/$sessionId/chunk_$i")
+                val chunkFile = File("uploads/$directory/$sessionId/chunk_$i")
                 if (chunkFile.exists()) {
                     outputFile.appendBytes(chunkFile.readBytes())
                     chunkFile.delete()

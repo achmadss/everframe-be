@@ -34,4 +34,5 @@ dependencies {
     implementation(libs.ktor.serialization.gson)
     implementation("org.jetbrains.exposed:exposed-java-time:0.60.0")
     implementation("io.ktor:ktor-server-status-pages:3.1.1")
+    implementation("io.ktor:ktor-client-content-negotiation:3.1.1")
 }

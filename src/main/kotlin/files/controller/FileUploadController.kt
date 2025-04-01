@@ -148,7 +148,7 @@ object FileUploadController {
                         }
                     }
 
-                    delete("/session/{sessionId}") {
+                    delete("/session/{directory}/{sessionId}") {
                         val directory = call.parameters["directory"]
                         if (directory == null) {
                             call.respond(
