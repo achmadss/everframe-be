@@ -88,6 +88,7 @@ object FileUploadService {
         }
     }
 
+    @Suppress("DEPRECATION")
     suspend fun processMultipart(
         data: MultiPartData,
         sessionId: UUID,
